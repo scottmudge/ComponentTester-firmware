@@ -1,0 +1,17 @@
+*.o
+
+*.hex
+
+ComponentTester
+
+ComponentTester.eep
+
+ComponentTester.lss
+
+ComponentTester.map
+
+dep/
+
+*.s
+
+.vscode/

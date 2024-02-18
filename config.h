@@ -3,7 +3,7 @@
  *   global configuration, setup and settings
  *
  *   (c) 2012-2023 by Markus Reschke
- *   based on code from Markus Frejek and Karl-Heinz Kübbeler
+ *   based on code from Markus Frejek and Karl-Heinz Kï¿½bbeler
  *
  * ************************************************************************ */
 
@@ -80,7 +80,7 @@
  *    reference
  */
 
-//#define HW_REF25
+#define HW_REF25
 
 
 /*
@@ -114,7 +114,7 @@
  *  - uncomment to enable
  */
 
-//#define HW_ZENER
+#define HW_ZENER
 
 
 /*
@@ -125,9 +125,9 @@
  *  - uncomment to enable and adjust resistor values
  */
 
-//#define ZENER_DIVIDER_CUSTOM
-#define ZENER_R1         180000
-#define ZENER_R2         20000
+#define ZENER_DIVIDER_CUSTOM
+#define ZENER_R1         100000
+#define ZENER_R2         12000
 
 
 /*
@@ -137,7 +137,7 @@
  *  - uncomment to enable
  */
 
-//#define ZENER_UNSWITCHED
+#define ZENER_UNSWITCHED
 
 
 /*
@@ -164,9 +164,9 @@
  *    voltage should be lower than the boost converter's output voltage.
  */
 
-//#define HW_PROBE_ZENER
+#define HW_PROBE_ZENER
 #define ZENER_VOLTAGE_MIN     1000      /* min. voltage in mV */
-#define ZENER_VOLTAGE_MAX     30000     /* max. voltage in mV */
+#define ZENER_VOLTAGE_MAX     40000     /* max. voltage in mV */
 
 
 /*
@@ -255,7 +255,7 @@
  *  - for a confirmation beep enable SW_IR_RX_BEEP
  */
 
-//#define HW_IR_RECEIVER
+#define HW_IR_RECEIVER
 
 
 /*
@@ -264,7 +264,7 @@
  *  - uncomment to enable
  */
 
-//#define HW_ADJUST_CAP
+#define HW_ADJUST_CAP
 
 
 /*
@@ -329,7 +329,7 @@
  */
 
 //#define HW_BUZZER
-#define BUZZER_ACTIVE                   /* active buzzer */
+// #define BUZZER_ACTIVE                   /* active buzzer */
 //#define BUZZER_PASSIVE                  /* passive buzzer */
 
 
@@ -374,7 +374,7 @@
  *  - uncomment to enable
  */
 
-#define SW_PWM_SIMPLE
+// #define SW_PWM_SIMPLE
 
 
 /*
@@ -439,7 +439,7 @@
  *  - uncomment to enable
  */
 
-#define SW_SQUAREWAVE
+// #define SW_SQUAREWAVE
 
 
 /*
@@ -449,7 +449,7 @@
  *  - uncomment to enable
  */
 
-#define SW_IR_RECEIVER
+// #define SW_IR_RECEIVER
 
 
 /*
@@ -458,7 +458,7 @@
  *  - select one
  */
 
-#define SW_IR_RX_PINOUT_G_V_D      /* 1-Gnd 2-Vcc 3-Data (default) */
+// #define SW_IR_RX_PINOUT_G_V_D      /* 1-Gnd 2-Vcc 3-Data (default) */
 //#define SW_IR_RX_PINOUT_D_G_V      /* 1-Data 2-Gnd 3-Vcc */
 //#define SW_IR_RX_PINOUT_D_V_G      /* 1-Data 2-Vcc 3-Gnd */
 
@@ -568,14 +568,14 @@
 
 /*
  *  DS18S20 - OneWire temperature sensor
- *  - DS18S20_HIGHRES: enable high resolution (0.01°C)
- *    normal resolution is 0.5°C
+ *  - DS18S20_HIGHRES: enable high resolution (0.01ï¿½C)
+ *    normal resolution is 0.5ï¿½C
  *  - uncomment to enable
  *  - also enable ONEWIRE_PROBES or ONEWIRE_IO_PIN (see section 'Busses')
  */
 
 //#define SW_DS18S20
-//#define DS18S20_HIGHRES       /* high resolution (0.01°C) */
+//#define DS18S20_HIGHRES       /* high resolution (0.01ï¿½C) */
 
 
 /*
@@ -604,7 +604,7 @@
  *  - uncomment to enable
  */
 
-//#define SW_CAP_LEAKAGE
+#define SW_CAP_LEAKAGE
 
 
 /*
@@ -613,7 +613,7 @@
  *  - uncomment to enable
  */
 
-//#define SW_REVERSE_HFE
+#define SW_REVERSE_HFE
 
 
 /*
@@ -623,7 +623,7 @@
  *  - uncomment to enable
  */
 
-//#define SW_HFE_CURRENT
+#define SW_HFE_CURRENT
 
 
 /*
@@ -718,7 +718,7 @@
  *  - uncomment to enable
  */ 
 
-//#define SW_C_VLOSS
+#define SW_C_VLOSS
 
 
 /*
@@ -726,7 +726,7 @@
  *  - uncomment to enable
  */
 
-//#define SW_PHOTODIODE
+#define SW_PHOTODIODE
 
 
 
@@ -913,7 +913,7 @@
  *  - Time between displaying the result and starting a new probing cycle.
  */
 
-#define CYCLE_DELAY      3000
+#define CYCLE_DELAY      2000
 
 
 /*
@@ -926,7 +926,7 @@
  *    until it's powered off manually.
  */
 
-#define CYCLE_MAX        5
+#define CYCLE_MAX        0
 
 
 /*
@@ -963,7 +963,7 @@
  *  - uncomment to enable
  */
 
-//#define UI_QUESTION_MARK
+#define UI_QUESTION_MARK
 
 
 /*
@@ -972,7 +972,7 @@
  *  - uncomment to enable
  */
 
-//#define UI_ZENER_DIODE
+#define UI_ZENER_DIODE
 
 
 /*
@@ -1127,7 +1127,7 @@
 /*
  *  Round some values if appropriate.
  *  - for
- *    - DS18B20 (0.1 °C/F)
+ *    - DS18B20 (0.1 ï¿½C/F)
  *  - uncomment to enable
  */
 
@@ -1192,8 +1192,8 @@
  */
 
 //#define BAT_NONE
-//#define BAT_DIRECT
-#define BAT_DIVIDER
+#define BAT_DIRECT
+// #define BAT_DIVIDER
 
 
 /*
@@ -1216,8 +1216,8 @@
  *  - standard values are: R1=10k, R2=3.3k
  */
 
-#define BAT_R1           10000
-#define BAT_R2           3300
+// #define BAT_R1           10000
+// #define BAT_R2           3300
 
 
 /*
@@ -1228,7 +1228,7 @@
  *  - Schottky diode about 200mV / PNP BJT about 100mV.
  */  
 
-#define BAT_OFFSET       290
+#define BAT_OFFSET       0
 
 
 /*
@@ -1237,7 +1237,7 @@
  *  - Voltage drop BAT_OFFSET is considered in calculation.
  */
 
-#define BAT_WEAK         7400
+#define BAT_WEAK         3600
 
 
 /*
@@ -1246,7 +1246,7 @@
  *  - Voltage drop BAT_OFFSET is considered in calculation.
  */
 
-#define BAT_LOW          6400 
+#define BAT_LOW          3400 
 
 
 /*
@@ -1361,9 +1361,9 @@
  *  Correction factors for capacitors (in 0.1%)
  *  - positive factor increases capacitance value
  *    negative factor decreases capacitance value
- *  - CAP_FACTOR_SMALL for caps < 4.7µF
- *  - CAP_FACTOR_MID for caps 4.7 - 47µF
- *  - CAP_FACTOR_LARGE for caps > 47µF
+ *  - CAP_FACTOR_SMALL for caps < 4.7ï¿½F
+ *  - CAP_FACTOR_MID for caps 4.7 - 47ï¿½F
+ *  - CAP_FACTOR_LARGE for caps > 47ï¿½F
  */
 
 #define CAP_FACTOR_SMALL      0      /* no correction */ 

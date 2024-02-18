@@ -2,7 +2,7 @@
 #  Makefile
 #
 #  (c) 2012-2023 by Markus Reschke
-#  based on code from Markus Frejek and Karl-Heinz Kübbeler
+#  based on code from Markus Frejek and Karl-Heinz Kï¿½bbeler
 #
 
 PROJECT = ComponentTester
@@ -22,14 +22,14 @@ PROJECT = ComponentTester
 # - ATmega 1280            : atmega1280
 # - ATmega 1284/1284P      : atmega1284
 # - ATmega 2560            : atmega2560
-MCU = atmega328
+MCU = atmega324p
 
 # MCU freqency:
 # - 1MHz  : 1
 # - 8MHz  : 8
 # - 16MHz : 16
 # - 20MHz : 20
-FREQ = 8
+FREQ = 16
 
 # oscillator type
 # - internal RC oscillator      : RC
@@ -69,7 +69,7 @@ endif
 # - ATmega 1284   : m1284
 # - ATmega 1284P  : m1284p
 # - ATmega 2560   : m2560
-PARTNO = m328p
+PARTNO = m324pa
 
 # avrdude: ISP programmer, port and options
 
@@ -84,9 +84,9 @@ PARTNO = m328p
 #OPTIONS = -B 10.0
 
 # Diamex ALL-AVR/AVR-Prog
-PROGRAMMER = avrispmkII
-PORT = usb
-OPTIONS = -B 1.0
+#PROGRAMMER = avrispmkII
+#PORT = usb
+#OPTIONS = -B 1.0
 
 # Pololu USB AVR Programmer
 #PROGRAMMER = stk500v2
@@ -99,9 +99,9 @@ OPTIONS = -B 1.0
 #OPTIONS = -B 20
 
 # USBtinyISP
-#PROGRAMMER = usbtiny
-#PORT = usb
-#OPTIONS = -B 5.0
+PROGRAMMER = usbtiny
+PORT = usb
+OPTIONS = -B 5.0
 
 # Arduino Uno bootloader via serial/USB
 #PROGRAMMER = arduino
@@ -132,12 +132,12 @@ CFLAGS += -DF_CPU=${FREQ}000000UL
 CFLAGS += -DOSC_STARTUP=${OSC_STARTUP}
 CFLAGS += -gdwarf-2 -std=gnu99 -Os -mcall-prologues
 CFLAGS += -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums
-#CFLAGS += -flto
+CFLAGS += -flto -flto-compression-level=9
 CFLAGS += -MD -MP -MT $(*F).o -MF dep/$(@F).d
 
 # linker flags
-LDFLAGS = -mmcu=${MCU} -Wl,-Map=${NAME}.map
-#LDFLAGS += -Wl,-relax
+LDFLAGS = -Os -s -mmcu=${MCU} -Wl,-Map=${NAME}.map
+LDFLAGS += -Wl,-relax
 
 # hex file flags
 HEX_FLASH_FLAGS = -R .eeprom -R .fuse -R .lock -R .signature
@@ -149,9 +149,10 @@ HEX_EEPROM_FLAGS += --change-section-lma .eeprom=0 --no-change-warnings
 HEADERS = config.h config_328.h config_644.h config_1280.h
 HEADERS += colors.h common.h functions.h variables.h $(wildcard var_*.h)
 HEADERS += OneWire.h ADS7843.h
-HEADERS += HD44780.h ILI9163.h ILI9341.h ILI9481.h ILI9486.h ILI9488.h
-HEADERS += PCD8544.h PCF8814.h SH1106.h SSD1306.h
-HEADERS += ST7036.h ST7565R.h ST7735.h ST7920.h STE2007.h
+# HEADERS += HD44780.h ILI9163.h ILI9341.h ILI9481.h ILI9486.h ILI9488.h
+# HEADERS += PCD8544.h PCF8814.h SH1106.h SSD1306.h
+# HEADERS += ST7036.h ST7565R.h ST7735.h ST7920.h STE2007.h
+HEADERS += ST7735.h
 
 # objects
 OBJECTS_C = main.o user.o pause.o adjust.o ADC.o probes.o display.o
@@ -159,9 +160,10 @@ OBJECTS_C += resistor.o cap.o semi.o inductor.o
 OBJECTS_C += tools_misc.o tools_signal.o tools_counter.o tools_LC_Meter.o
 OBJECTS_C += SPI.o I2C.o serial.o commands.o OneWire.o
 OBJECTS_C += IR_RX.o IR_TX.o DHTxx.o ADS7843.o MAX6675.o MAX31855.o
-OBJECTS_C += HD44780.o ILI9163.o ILI9341.o ILI9481.o ILI9486.o ILI9488.o
-OBJECTS_C += PCD8544.o PCF8814.o SH1106.o SSD1306.o
-OBJECTS_C += ST7036.o ST7565R.o ST7735.o Semi_ST7735.o ST7920.o
+# OBJECTS_C += HD44780.o ILI9163.o ILI9341.o ILI9481.o ILI9486.o ILI9488.o
+# OBJECTS_C += PCD8544.o PCF8814.o SH1106.o SSD1306.o
+OBJECTS_C += ST7735.o
+# OBJECTS_C += ST7036.o ST7565R.o ST7735.o Semi_ST7735.o ST7920.o
 OBJECTS_C += STE2007.o VT100.o RD_Display.o
 OBJECTS_S = wait.o
 OBJECTS = ${OBJECTS_C} ${OBJECTS_S}
@@ -308,7 +310,8 @@ ifeq (${FAMILY},atmega328_324_640)
   # high byte: use default settings, disable JTAG
   HFUSE = -U hfuse:w:0xd9:m
   # extended byte: BOD level 4.3V
-  EFUSE = -U efuse:w:0xfc:m
+  # EFUSE = -U efuse:w:0xfc:m
+  EFUSE = -U efuse:w:0xfd:m
   # low byte: clock settings
   ifeq (${FREQ},1)
     # internal RC oscillator (8MHz) and /1 clock divider
