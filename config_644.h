@@ -981,7 +981,7 @@
 #define TP_REF           PA3       /* test pin for 2.5V reference and relay */
 #define TP_BAT           PA5       /* test pin for battery (4:1 voltage divider) */
 #define TP_CAP           PA7       /* test pin for self-adjustment cap */
-#define TP_LOGIC         PA6       /* test pin for Logic Probe (4:1 voltage divider) */
+// #define TP_LOGIC         PA6       /* test pin for Logic Probe (4:1 voltage divider) */
 
 
 /*
@@ -1025,21 +1025,21 @@
  *  - can't be same port as ADC_PORT or R_PORT
  */
 
-#define BUTTON_PORT      PORTD     /* port data register */
-#define BUTTON_DDR       DDRD      /* port data direction register */
-#define BUTTON_PIN       PIND      /* port input pins register */
-#define TEST_BUTTON      PD1       /* test/start push button (low active) */
+#define BUTTON_PORT      PORTC     /* port data register */
+#define BUTTON_DDR       DDRC      /* port data direction register */
+#define BUTTON_PIN       PINC      /* port input pins register */
+#define TEST_BUTTON      PC7       /* test/start push button (low active) */
 
 
 /*
  *  rotary encoder
  */
 
-#define ENCODER_PORT     PORTC     /* port data register */
-#define ENCODER_DDR      DDRC      /* port data direction register */
-#define ENCODER_PIN      PINC      /* port input pins register */
-#define ENCODER_A        PC3       /* rotary encoder A signal */
-#define ENCODER_B        PC4       /* rotary encoder B signal */
+#define ENCODER_PORT     PORTD     /* port data register */
+#define ENCODER_DDR      DDRD      /* port data direction register */
+#define ENCODER_PIN      PIND      /* port input pins register */
+#define ENCODER_A        PD1       /* rotary encoder A signal */
+#define ENCODER_B        PD4       /* rotary encoder B signal */
 
 
 /*

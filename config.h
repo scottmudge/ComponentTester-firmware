@@ -36,7 +36,7 @@
  *    to match your rotary encoder
  */
 
-//#define HW_ENCODER
+// #define HW_ENCODER
 
 
 /*
@@ -255,7 +255,7 @@
  *  - for a confirmation beep enable SW_IR_RX_BEEP
  */
 
-#define HW_IR_RECEIVER
+// #define HW_IR_RECEIVER
 
 
 /*
@@ -585,7 +585,7 @@
  *  - uncomment to enable
  */
 
-//#define ONEWIRE_READ_ROM
+#define ONEWIRE_READ_ROM
 
 
 /*
@@ -595,7 +595,7 @@
  *  - also enable ONEWIRE_PROBES or ONEWIRE_IO_PIN (see section 'Busses')
  */
 
-//#define SW_ONEWIRE_SCAN
+#define SW_ONEWIRE_SCAN
 
 
 /*
@@ -634,11 +634,11 @@
  *  - uncomment to enable (one or more)
  */
 
-//#define SW_MONITOR_R          /* just R */
-//#define SW_MONITOR_C          /* just C plus ESR */
-//#define SW_MONITOR_L          /* just L */
-//#define SW_MONITOR_RCL        /* R plus L, or C plus ESR */
-//#define SW_MONITOR_RL         /* R plus L */
+// #define SW_MONITOR_R          /* just R */
+// #define SW_MONITOR_C          /* just C plus ESR */
+// #define SW_MONITOR_L          /* just L */
+// #define SW_MONITOR_RCL        /* R plus L, or C plus ESR */
+// #define SW_MONITOR_RL         /* R plus L */
 
 
 /*
@@ -647,8 +647,8 @@
  *  - uncomment to enable (one or more)
  */
 
-//#define SW_MONITOR_HOLD_ESR   /* auto-hold ESR (C monitor) */
-//#define SW_MONITOR_HOLD_L     /* auto-hold L (L monitor) */
+#define SW_MONITOR_HOLD_ESR   /* auto-hold ESR (C monitor) */
+#define SW_MONITOR_HOLD_L     /* auto-hold L (L monitor) */
 
 
 /*
@@ -666,13 +666,13 @@
  *  - uncomment to enable (one or more)
  */
 
-//#define SW_R_E24_5_T          /* E24 5% tolerance, text */
-//#define SW_R_E24_5_CC         /* E24 5% tolerance, color-code */
-//#define SW_R_E24_1_T          /* E24 1% tolerance, text */
-//#define SW_R_E24_1_CC         /* E24 1% tolerance, color-code */
-//#define SW_R_E96_T            /* E96 1% tolerance, text */
-//#define SW_R_E96_CC           /* E96 1% tolerance, color-code */
-//#define SW_R_E96_EIA96        /* E96 1% tolerance, EIA-96 code */
+#define SW_R_E24_5_T          /* E24 5% tolerance, text */
+// #define SW_R_E24_5_CC         /* E24 5% tolerance, color-code */
+#define SW_R_E24_1_T          /* E24 1% tolerance, text */
+// #define SW_R_E24_1_CC         /* E24 1% tolerance, color-code */
+#define SW_R_E96_T            /* E96 1% tolerance, text */
+// #define SW_R_E96_CC           /* E96 1% tolerance, color-code */
+// #define SW_R_E96_EIA96        /* E96 1% tolerance, EIA-96 code */
 
 
 /*
@@ -681,8 +681,8 @@
  *  - uncomment to enable (one or more)
  */
 
-//#define SW_C_E6_T             /* E6 20% tolerance, text */
-//#define SW_C_E12_T            /* E12 10% tolerance, text */
+#define SW_C_E6_T             /* E6 20% tolerance, text */
+#define SW_C_E12_T            /* E12 10% tolerance, text */
 
 
 /*
@@ -690,9 +690,9 @@
  *  - requires a display with more than 2 text lines
  *  - uncomment to enable (one or more)
  */
-
-//#define SW_L_E6_T             /* E6 20% tolerance, text */
-//#define SW_L_E12_T            /* E12 10% tolerance, text */
+ 
+#define SW_L_E6_T             /* E6 20% tolerance, text */
+#define SW_L_E12_T            /* E12 10% tolerance, text */
 
 
 /*
@@ -710,7 +710,7 @@
  *  - uncomment to enable
  */
 
-//#define SW_R_TRIMMER
+#define SW_R_TRIMMER
 
 
 /*
