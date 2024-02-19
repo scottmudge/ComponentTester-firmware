@@ -1035,11 +1035,11 @@
  *  rotary encoder
  */
 
-#define ENCODER_PORT     PORTD     /* port data register */
-#define ENCODER_DDR      DDRD      /* port data direction register */
-#define ENCODER_PIN      PIND      /* port input pins register */
-#define ENCODER_A        PD1       /* rotary encoder A signal */
-#define ENCODER_B        PD4       /* rotary encoder B signal */
+#define ENCODER_PORT     PORTB     /* port data register */
+#define ENCODER_DDR      DDRB      /* port data direction register */
+#define ENCODER_PIN      PINB      /* port input pins register */
+#define ENCODER_A        PB6       /* rotary encoder A signal */
+#define ENCODER_B        PB5       /* rotary encoder B signal */
 
 
 /*

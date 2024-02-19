@@ -36,7 +36,7 @@
  *    to match your rotary encoder
  */
 
-// #define HW_ENCODER
+#define HW_ENCODER
 
 
 /*
