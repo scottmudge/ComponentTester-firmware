@@ -105,7 +105,7 @@ LCD module:
 //#define LCD_OFFSET_Y     2              /* enable y offset of 1 or 2 dots */
 #define LCD_FLIP_X                      /* enable horizontal flip */
 //#define LCD_FLIP_Y                      /* enable vertical flip */
-#define LCD_ROTATE                      /* switch X and Y (rotate by 90°) */
+#define LCD_ROTATE                      /* switch X and Y (rotate by 90ï¿½) */
 //#define LCD_LATE_ON                     /* turn on LCD after clearing it */
 #define FONT_10X16_HF                   /* 10x16 font */
 #define SYMBOLS_24X24_HF                /* 24x24 symbols */
@@ -158,15 +158,15 @@ Inductance compensation offsets for 20MHz model
 
       #if CPU_FREQ == 20000000
       /* 20 MHz */
-      if (Temp < 1500)        /* < 1.5µs / < 100µH */
+      if (Temp < 1500)        /* < 1.5ï¿½s / < 100ï¿½H */
       {
         Offset = -10;
       }
-      else if (Temp < 5000)   /* 1.5-5µs / 100-330µH */
+      else if (Temp < 5000)   /* 1.5-5ï¿½s / 100-330ï¿½H */
       {
         Offset = -10; 
       }
-      else                    /* > 5µs / > 330µH */
+      else                    /* > 5ï¿½s / > 330ï¿½H */
       {
         Offset = -30;
       }
@@ -242,7 +242,7 @@ LCD module:
 #define LCD_OFFSET_Y                    /* enable y offset of 2 dots */
 #define LCD_FLIP_X                      /* enable horizontal flip */
 //#define LCD_FLIP_Y                      /* enable vertical flip */
-#define LCD_ROTATE                      /* switch X and Y (rotate by 90°) */
+#define LCD_ROTATE                      /* switch X and Y (rotate by 90ï¿½) */
 #define LCD_LATE_ON                     /* turn on LCD after clearing it */
 #define FONT_10X16_HF                   /* 10x16 font */
 #define SYMBOLS_30X32_HF                /* 30x32 symbols */
@@ -581,7 +581,7 @@ Beware:
 
 Hints:
 - Control MCU U4 (STC15L104W) needs to be replaced with a simple two-transistor
-  circuit (TC1-Mod, see source repository for TC1-Mod.kicad.tgz, 5µA standby
+  circuit (TC1-Mod, see source repository for TC1-Mod.kicad.tgz, 5ï¿½A standby
   current in total) or reprogrammed with a modified firmware (see
   https://github.com/atar-axis/tc1-u4). The designator can be also U3 (T7 Plus)
   or U5 for newer PCBs.
@@ -590,7 +590,7 @@ Hints:
 - Set extended fuse byte to 0xfd (brown-out detection).
 - If D2 (rectifier diode for Zener test voltage) gets hot replace it with a
   Schottky diode rated for 80V reverse voltage or higher, e.g. SS18.
-- Replace C11 and C12 (filter caps for Zener test voltage) with a 10 or 22µF
+- Replace C11 and C12 (filter caps for Zener test voltage) with a 10 or 22ï¿½F
   low-ESR electrolytic cap rated for 100V or higher because of the MLCC DC
   bias capacitance derating issue.
 - Based on the LCD module used you might have to set LCD_FLIP_X instead of
@@ -607,93 +607,93 @@ Hints:
 - PD0 solder bridge (open: pull-up, shorted: Gnd, unused by m-firmware)
 
 Hardware Options:
-#define HW_REF25
-#define HW_ZENER
-#define ZENER_DIVIDER_CUSTOM
-#define ZENER_R1         100000
-#define ZENER_R2         12000
-#define ZENER_UNSWITCHED
-#define HW_IR_RECEIVER
-#define HW_ADJUST_CAP
+  #define HW_REF25
+  #define HW_ZENER
+  #define ZENER_DIVIDER_CUSTOM
+  #define ZENER_R1         100000
+  #define ZENER_R2         12000
+  #define ZENER_UNSWITCHED
+  #define HW_IR_RECEIVER
+  #define HW_ADJUST_CAP
 
 Optionally:
-#define HW_PROBE_ZENER
-#define ZENER_VOLTAGE_MIN     1000      /* min. voltage in mV */
-#define ZENER_VOLTAGE_MAX     40000     /* max. voltage in mV */
+  #define HW_PROBE_ZENER
+  #define ZENER_VOLTAGE_MIN     1000      /* min. voltage in mV */
+  #define ZENER_VOLTAGE_MAX     40000     /* max. voltage in mV */
 
 Workarounds (if required):
 #define PASSIVE_POWER_CTRL              /* if tester turns off suddenly */
 
 Power management settings:
-#define BAT_DIRECT
-#define BAT_OFFSET       0
-#define BAT_WEAK         3600
-#define BAT_LOW          3400
+  #define BAT_DIRECT
+  #define BAT_OFFSET       0
+  #define BAT_WEAK         3600
+  #define BAT_LOW          3400
 
 LCD module:
-#define LCD_ST7735
-#define LCD_COLOR                       /* color graphic display */
-#define LCD_SPI                         /* SPI interface */
-#define LCD_PORT         PORTB          /* port data register */
-#define LCD_DDR          DDRB           /* port data direction register */
-#define LCD_RES          PB4            /* port pin used for /RESX (optional) */
-//#define LCD_CS           PB?            /* port pin used for /CSX (optional) */
-#define LCD_DC           PB5            /* port pin used for D/CX */
-#define LCD_SCL          PB7            /* port pin used for SCL */
-#define LCD_SDA          PB6            /* port pin used for SDA */
-#define LCD_DOTS_X       128            /* number of horizontal dots */
-#define LCD_DOTS_Y       160            /* number of vertical dots */
-#define LCD_OFFSET_X     2              /* enable x offset of 2 or 4 dots */
-#define LCD_OFFSET_Y     1              /* enable y offset of 1 or 2 dots */
-//#define LCD_FLIP_X                      /* enable horizontal flip */
-#define LCD_FLIP_Y                      /* enable vertical flip */
-#define LCD_ROTATE                      /* switch X and Y (rotate by 90°) */
-#define LCD_LATE_ON                     /* turn on LCD after clearing it */
-#define FONT_10X16_HF                   /* 10x16 font */
-#define SYMBOLS_30X32_HF                /* 30x32 symbols */
-#define SPI_BITBANG                     /* bit-bang SPI */
-#define SPI_PORT         LCD_PORT       /* SPI port data register */
-#define SPI_DDR          LCD_DDR        /* SPI port data direction register */
-#define SPI_SCK          LCD_SCL        /* port pin used for SCK */
-#define SPI_MOSI         LCD_SDA        /* port pin used for MOSI */
+  #define LCD_ST7735
+  #define LCD_COLOR                       /* color graphic display */
+  #define LCD_SPI                         /* SPI interface */
+  #define LCD_PORT         PORTB          /* port data register */
+  #define LCD_DDR          DDRB           /* port data direction register */
+  #define LCD_RES          PB4            /* port pin used for /RESX (optional) */
+  //#define LCD_CS           PB?            /* port pin used for /CSX (optional) */
+  #define LCD_DC           PB5            /* port pin used for D/CX */
+  #define LCD_SCL          PB7            /* port pin used for SCL */
+  #define LCD_SDA          PB6            /* port pin used for SDA */
+  #define LCD_DOTS_X       128            /* number of horizontal dots */
+  #define LCD_DOTS_Y       160            /* number of vertical dots */
+  #define LCD_OFFSET_X     2              /* enable x offset of 2 or 4 dots */
+  #define LCD_OFFSET_Y     1              /* enable y offset of 1 or 2 dots */
+  //#define LCD_FLIP_X                      /* enable horizontal flip */
+  #define LCD_FLIP_Y                      /* enable vertical flip */
+  #define LCD_ROTATE                      /* switch X and Y (rotate by 90ï¿½) */
+  #define LCD_LATE_ON                     /* turn on LCD after clearing it */
+  #define FONT_10X16_HF                   /* 10x16 font */
+  #define SYMBOLS_30X32_HF                /* 30x32 symbols */
+  #define SPI_BITBANG                     /* bit-bang SPI */
+  #define SPI_PORT         LCD_PORT       /* SPI port data register */
+  #define SPI_DDR          LCD_DDR        /* SPI port data direction register */
+  #define SPI_SCK          LCD_SCL        /* port pin used for SCK */
+  #define SPI_MOSI         LCD_SDA        /* port pin used for MOSI */
 
-Pinout for test probes:
-#define TP_ZENER         PA4       /* test pin with 10:1 voltage divider */
-#define TP_REF           PA3       /* test pin with 2.5V reference */
-#define TP_BAT           PA5       /* test pin with 4:1 voltage divider */
-#define TP_CAP           PA7       /* test pin for self-adjustment cap */
+  Pinout for test probes:
+  #define TP_ZENER         PA4       /* test pin with 10:1 voltage divider */
+  #define TP_REF           PA3       /* test pin with 2.5V reference */
+  #define TP_BAT           PA5       /* test pin with 4:1 voltage divider */
+  #define TP_CAP           PA7       /* test pin for self-adjustment cap */
 
 Pinout for probe resistors:
-#define R_PORT           PORTC     /* port data register */
-#define R_DDR            DDRC      /* port data direction register */
-#define R_RL_1           PC0       /* Rl (680R) for test pin #1 */
-#define R_RH_1           PC1       /* Rh (470k) for test pin #1 */
-#define R_RL_2           PC2       /* Rl (680R) for test pin #2 */
-#define R_RH_2           PC3       /* Rh (470k) for test pin #2 */
-#define R_RL_3           PC4       /* Rl (680R) for test pin #3 */
-#define R_RH_3           PC5       /* Rh (470k) for test pin #3 */
+  #define R_PORT           PORTC     /* port data register */
+  #define R_DDR            DDRC      /* port data direction register */
+  #define R_RL_1           PC0       /* Rl (680R) for test pin #1 */
+  #define R_RH_1           PC1       /* Rh (470k) for test pin #1 */
+  #define R_RL_2           PC2       /* Rl (680R) for test pin #2 */
+  #define R_RH_2           PC3       /* Rh (470k) for test pin #2 */
+  #define R_RL_3           PC4       /* Rl (680R) for test pin #3 */
+  #define R_RH_3           PC5       /* Rh (470k) for test pin #3 */
 
 Pinout for power control:
-#define POWER_PORT       PORTD     /* port data register */
-#define POWER_DDR        DDRD      /* port data direction register */
-#define POWER_CTRL       PD2       /* controls power (1: on / 0: off) */
+  #define POWER_PORT       PORTD     /* port data register */
+  #define POWER_DDR        DDRD      /* port data direction register */
+  #define POWER_CTRL       PD2       /* controls power (1: on / 0: off) */
 
 Pinout for test button:
-#define BUTTON_PORT      PORTD     /* port data register */
-#define BUTTON_DDR       DDRD      /* port data direction register */
-#define BUTTON_PIN       PIND      /* port input pins register */
-#define TEST_BUTTON      PD1       /* test/start push button (low active) */
+  #define BUTTON_PORT      PORTD     /* port data register */
+  #define BUTTON_DDR       DDRD      /* port data direction register */
+  #define BUTTON_PIN       PIND      /* port input pins register */
+  #define TEST_BUTTON      PD1       /* test/start push button (low active) */
 
 Pinout for fixed IR detector/decoder:
-#define IR_PORT          PORTD     /* port data register */
-#define IR_DDR           DDRD      /* port data direction register */
-#define IR_PIN           PIND      /* port input pins register */
-#define IR_DATA          PD3       /* data signal */
+  #define IR_PORT          PORTD     /* port data register */
+  #define IR_DDR           DDRD      /* port data direction register */
+  #define IR_PIN           PIND      /* port input pins register */
+  #define IR_DATA          PD3       /* data signal */
 
 Pinout for fixed cap for self-adjustment:
-#define ADJUST_PORT      PORTC     /* port data register */
-#define ADJUST_DDR       DDRC      /* port data direction register */
-#define ADJUST_RH        PC6       /* Rh (470k) for fixed cap */
+  #define ADJUST_PORT      PORTC     /* port data register */
+  #define ADJUST_DDR       DDRC      /* port data direction register */
+  #define ADJUST_RH        PC6       /* Rh (470k) for fixed cap */
 
 ------------------------------------------------------------------------------
 
@@ -780,7 +780,7 @@ LCD module:
 #define LCD_OFFSET_Y     1              /* enable y offset of 1 or 2 dots */
 #define LCD_FLIP_X                      /* enable horizontal flip */
 //#define LCD_FLIP_Y                      /* enable vertical flip */
-#define LCD_ROTATE                      /* switch X and Y (rotate by 90°) */
+#define LCD_ROTATE                      /* switch X and Y (rotate by 90ï¿½) */
 //#define LCD_BGR                         /* reverse red and blue color channels */
 #define LCD_LATE_ON                     /* turn on LCD after clearing it */
 #define FONT_10X16_HF                   /* 10x16 font */
