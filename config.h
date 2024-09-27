@@ -421,7 +421,7 @@
  *  - uncomment to enable
  */
 
-//#define SW_ESR_TOOL
+#define SW_ESR_TOOL
 
 
 /*
@@ -1057,7 +1057,7 @@
  *  - uncomment to enable
  */
 
-//#define UI_COLORED_TITLES
+#define UI_COLORED_TITLES
 
 
 /*
@@ -1067,7 +1067,7 @@
  *  - uncomment to enable
  */
 
-//#define UI_COLORED_CURSOR
+#define UI_COLORED_CURSOR
 
 
 /*
@@ -1078,7 +1078,7 @@
  *  - uncomment to enable
  */
 
-//#define UI_COLORED_VALUES
+#define UI_COLORED_VALUES
 
 
 /*
@@ -1088,7 +1088,7 @@
  *  - uncomment to enable
  */
 
-//#define UI_MENU_PAGEMODE
+#define UI_MENU_PAGEMODE
 
 
 /*
@@ -1104,7 +1104,7 @@
  *  - uncomment to enable
  */
 
-//#define SW_POWER_OFF
+#define SW_POWER_OFF
 
 
 /*
@@ -1140,7 +1140,7 @@
  *  - uncomment to enable
  */
 
-//#define UI_CENTER_ALIGN
+#define UI_CENTER_ALIGN
 
 
 /*
@@ -1159,8 +1159,8 @@
  *  - uncomment one
  */ 
 
-#define DATA_EEPROM           /* store data in EEPROM */
-//#define DATA_FLASH            /* store data in Flash */
+//#define DATA_EEPROM           /* store data in EEPROM */
+#define DATA_FLASH            /* store data in Flash */
 
 
 
@@ -1321,7 +1321,7 @@
  *  - uncomment to enable
  */
 
-//#define R_MULTIOFFSET
+#define R_MULTIOFFSET
 
 
 /* 
@@ -1346,7 +1346,7 @@
  *  - uncomment to enable
  */
 
-//#define CAP_MULTIOFFSET
+#define CAP_MULTIOFFSET
 
 
 /*
