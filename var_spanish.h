@@ -2,7 +2,7 @@
  *
  *   language specific global variables: Spanish (ISO 8859-1)
  *
- *   (c) 2016-2023 by Markus Reschke
+ *   (c) 2016-2024 by Markus Reschke
  *   translation by pepe10000@EEVblog
  *   based on code from Markus Frejek and Karl-Heinz Kübbeler
  *
@@ -32,7 +32,6 @@
   const unsigned char Failed2_str[] MEM_TYPE = "encontrado*";
   const unsigned char Done_str[] MEM_TYPE = "*Hecho*";
   const unsigned char Select_str[] MEM_TYPE = "Seleccionar";
-  const unsigned char Selftest_str[] MEM_TYPE = "Autotest";
   const unsigned char Adjustment_str[] MEM_TYPE = "Calibracion";
   const unsigned char Save_str[] MEM_TYPE = "Guardar";
   const unsigned char Load_str[] MEM_TYPE = "Cargar";
@@ -56,6 +55,10 @@
 
 
   /* options */
+  #ifdef SW_SELFTEST
+    const unsigned char Selftest_str[] MEM_TYPE = "Autotest";
+  #endif
+
   #if ! defined (BAT_NONE) && ! defined (UI_BATTERY)
     const unsigned char Battery_str[] MEM_TYPE = "Bat";
     const unsigned char OK_str[] MEM_TYPE = "bien";
@@ -217,6 +220,14 @@
     const unsigned char Photodiode_str[] MEM_TYPE = "Fotodiodo";
     const unsigned char NoBias_str[] MEM_TYPE = "no";
     const unsigned char ReverseBias_str[] MEM_TYPE = "inv";
+  #endif
+
+  #ifdef SW_DIODE_LED
+    const unsigned char Diode_LED_str[] MEM_TYPE = "Diodo/LED";
+  #endif
+
+  #ifdef SW_METER_5VDC
+    const unsigned char Meter_5VDC_str[] MEM_TYPE = "5V-Meter";
   #endif
 
 #endif

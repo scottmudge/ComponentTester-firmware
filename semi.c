@@ -2,7 +2,7 @@
  *
  *   semiconductor tests and measurements
  *
- *   (c) 2012-2023 by Markus Reschke
+ *   (c) 2012-2024 by Markus Reschke
  *   based on code from Markus Frejek and Karl-Heinz Kübbeler
  *
  * ************************************************************************ */
@@ -352,6 +352,7 @@ void CheckDiode(void)
   /* R_DDR is set to HiZ by DischargeProbes() */
   U2_Zero = ReadU(Probes.Ch_1);         /* get voltage at anode */
 
+  /* measure voltage across DUT (Vf) with Rh */
   /* set probes: Gnd -- Rh -- probe-2 / probe-1 -- Vcc */
   ADC_DDR = 0;                          /* set to HiZ to prepare change */
   ADC_PORT = Probes.Pin_1;              /* pull up anode directly */
@@ -370,6 +371,7 @@ void CheckDiode(void)
     U2_Rh = 0;                          /* simply zero */
   }
 
+  /* measure voltage across DUT (Vf) with Rl */
   /* set probes: Gnd -- Rl -- probe-2 / probe-1 -- Vcc */
   R_DDR = Probes.Rl_2;                  /* pull down cathode via Rl */
   PullProbe(Probes.Rl_3, PULL_10MS | PULL_DOWN);   /* discharge gate */
@@ -492,7 +494,7 @@ void CheckDiode(void)
     {
       Check.Found = COMP_DIODE;
       /* Check.Type = TYPE_STANDARD; */
-      /* we don't set Comp.Done in case we'll find something different */
+      /* we don't set Check.Done in case we'll find something different */
     }
 
     /* save data */
@@ -1331,7 +1333,8 @@ void CheckDepletionModeFET(uint16_t U_Rl)
    *  - Gnd -- Rl -- probe-2 / probe-1 -- Vcc
    *
    *  MOSFETs require a single pass detection because of the intrinsic
-   *  flyback diode. JFETs don't got that diode.
+   *  flyback diode. JFETs don't got that diode, but some rare types
+   *  come with an integrated flyback diode.
    */
 
 
@@ -1366,16 +1369,18 @@ void CheckDepletionModeFET(uint16_t U_Rl)
   /* probes already set to: Gnd -- Rl -- probe-2 / probe-1 -- Vcc */
 
   /* get source voltage when gate is pulled down */
-  /* should create a slightly negative V_GS via voltage drop across Rl at source */
+  /* create a negative V_GS via voltage drop across Rl at source */
   /* set probes: Gnd -- Rl -- probe-2 / probe-1 -- Vcc / probe-3 -- Rh -- Gnd */
   R_DDR = Probes.Rl_2 | Probes.Rh_3;    /* pull down gate via Rh */
   U_1 = ReadU_20ms(Probes.Ch_2);        /* voltage at source */
 
   /* get source voltage when gate is pulled up */
+  /* create a slightly positive V_GS via voltage drop across Rl at source */
   /* set probes: Gnd -- Rl -- probe-2 / probe-1 -- Vcc / probe-3 -- Rh -- Vcc */
   R_PORT = Probes.Rh_3;                 /* pull up gate via Rh */
   U_2 = ReadU_20ms(Probes.Ch_2);        /* voltage at source */
   Diff_1 = U_2 - U_1;                   /* source voltage difference */
+  /* underun doesn't matter because of next "if" condition */
 
 
   /*
@@ -1422,7 +1427,7 @@ void CheckDepletionModeFET(uint16_t U_Rl)
     U_1 = ReadU_20ms(Probes.Ch_3);           /* get voltage at base */
     ADC_DDR = 0;
 
-    if (U_1 < 700)            /* low V_BE < 550mV + 150mV */
+    if (U_1 < 700)            /* low V_BE < (550mV + 150mV) */
     {
       Flag = SIGNAL_OTHER;    /* most likely a Ge BJT */
     }
@@ -1475,6 +1480,18 @@ void CheckDepletionModeFET(uint16_t U_Rl)
     U_2 = ReadU_20ms(Probes.Ch_1);      /* voltage at source */
     Diff_2 = U_2 - U_1;                 /* source voltage difference */
 
+    #if 0
+    /* todo: prevent underun? */
+    if (U_2 > U_1)                      /* prevent underun */
+    {
+      Diff_2 = U_2 - U_1;               /* source voltage difference */
+    }
+    else                                /* underun */
+    {
+      Diff_2 = 0;                       /* set zero */
+    }
+    #endif
+
 
     /*
      *  Compare gate voltages to distinguish JFET from MOSFET
@@ -1526,7 +1543,7 @@ void CheckDepletionModeFET(uint16_t U_Rl)
     /*  we assume: probe-1 = S / probe-2 = D / probe-3 = G */
 
     /* get source voltage when gate is pulled up */
-    /* should create a slightly positive V_GS via voltage drop across Rl at source */
+    /* create a positive V_GS via voltage drop across Rl at source */
     /* set probes: Gnd -- probe-2 / probe-1 -- Rl -- Vcc / probe-3 -- Rh -- Vcc */
     ADC_PORT = 0;                       /* set ADC port to Gnd */
     ADC_DDR = Probes.Pin_2;             /* pull down drain directly */
@@ -1535,10 +1552,12 @@ void CheckDepletionModeFET(uint16_t U_Rl)
     U_1 = ReadU_20ms(Probes.Ch_1);      /* get voltage at source */
 
     /* get source voltage when gate is pulled down */
+    /* create a slightly negative V_GS via voltage drop across Rl at source */
     /* set probes: Gnd -- probe-2 / probe-1 -- Rl -- Vcc / probe-3 -- Rh -- Gnd */
     R_PORT = Probes.Rl_1;               /* pull down gate via Rh */
     U_2 = ReadU_20ms(Probes.Ch_1);      /* get voltage at source */
     Diff_1 = U_1 - U_2;                 /* source voltage difference */
+    /* underun doesn't matter because of next "if" condition */
 
 
     /*
@@ -1547,7 +1566,7 @@ void CheckDepletionModeFET(uint16_t U_Rl)
      *  p-channel FET.
      */
 
-    if (U_1 > (U_2 + Offset))      /* exceeds offset */
+    if (U_1 > (U_2 + Offset))      /* exceeds required offset */
     {
       /*
        *  p-channel depletion-mode FET
@@ -1624,8 +1643,8 @@ void CheckDepletionModeFET(uint16_t U_Rl)
 
 
       /*
-       *  detect drain and source by a 2nd measurement with reversed
-       *  drain and source pins
+       *  Detect drain and source by a 2nd measurement with reversed
+       *  drain and source pins.
        */
 
       /* we simulate: probe-1 = D / probe-2 = S / probe-3 = G */
@@ -1642,6 +1661,28 @@ void CheckDepletionModeFET(uint16_t U_Rl)
       R_PORT = Probes.Rl_2;               /* pull down gate via Rh */
       U_2 = ReadU_20ms(Probes.Ch_2);      /* get voltage at source */
       Diff_2 = U_1 - U_2;                 /* source voltage difference */
+
+      #if 0
+      /* todo: prevent underun? */
+      if (U_1 > U_2)                      /* prevent underun */
+      {
+        Diff_2 = U_1 - U_2;               /* source voltage difference */
+      }
+      else                                /* underun */
+      {
+        Diff_2 = 0;                       /* set zero */
+      }
+      #endif
+
+      /* consider intrinsic or optional flyback diode (causes low Diff_2) */
+      if (Diff_2 < (Offset / 2))          /* diode */
+      {
+        /* swap Diff_1 and Diff_2 */
+        /* to fix reversed D/S issue caused by diode */
+        U_1 = Diff_1;
+        Diff_1 = Diff_2;
+        Diff_2 = U_1;
+      }
 
 
       /*
@@ -1686,7 +1727,7 @@ void CheckDepletionModeFET(uint16_t U_Rl)
    *  on match process and save data
    */
 
-  if (Flag == 2)         /* found depletion-mode FET */
+  if (Flag == SIGNAL_FET)     /* found depletion-mode FET */
   {
     /* common stuff */
     Check.Found = COMP_FET;        /* it's a FET */
@@ -1695,19 +1736,23 @@ void CheckDepletionModeFET(uint16_t U_Rl)
 
     /*
      *  drain & source pinout
-     *  - larger voltage difference wins
+     *  - n-ch: larger voltage difference wins
+     *  - p-ch: smaller voltage difference wins
+     *    But we take the larger one and indirectly reverse D/S pins
+     *    (double reverse) to shorten code.
      */
 
-    if (Diff_1 > Diff_2)      /* drain and source as assumed */
+    if (Diff_1 > Diff_2)      /* n-ch: drain and source as assumed */
     {
       Semi.B = Probes.ID_1;        /* probe ID for drain */
       Semi.C = Probes.ID_2;        /* probe ID for source */
     }
-    else                      /* drain and source reversed */
+    else                      /* n-ch: drain and source reversed */
     {
       Semi.B = Probes.ID_2;        /* probe ID for drain */
       Semi.C = Probes.ID_1;        /* probe ID for source */
     }
+
 
     /*
      *  drain & source symmetry
@@ -1728,6 +1773,7 @@ void CheckDepletionModeFET(uint16_t U_Rl)
      *  I_DSS (V_GS = 0V)
      */
 
+    /* use: probe-1 = D / probe-2 = S / probe-3 = G */
     UpdateProbes(Semi.B, Semi.C, Semi.A);    /* drain, source, gate */
     ADC_DDR = Probes.Pin_2 | Probes.Pin_3 ;  /* enable direct pull of source & gate */
     R_DDR = Probes.Rl_1;                     /* enable Rl for drain */
@@ -2058,8 +2104,8 @@ void CheckUJT(void)
   uint16_t          U_3;           /* voltage */
 
   /* 
-   *  A UJT has a resistance of about 4-12kOhms between B2 and B1,
-   *  a PN junction between E and B2, and another one between E and B1.
+   *  A UJT has a resistance of about 4-12 kOhms between B2 and B1, and
+   *  a PN junction between E and B2/B1 (same N-type semi).
    *  E is nearer B2, i.e. R_B2 < R_B1 when not conducting.
    * 
    *  we assume: probe-1 = B2 / probe-2 = B1 / probe-3 = E
@@ -2067,17 +2113,17 @@ void CheckUJT(void)
 
 
   /*
-   *  Measure R_BB 
+   *  Measure R_BB
    *  - At this point we shouldn't have found any resistors.
    */
 
-  if (Check.Resistors == 0)        /* */
+  if (Check.Resistors == 0)        /* no resistors found yet */
   {
-    CheckResistor();               /* measure R_BB */
+    CheckResistor();               /* measure R_BB (between probe-1 and probe-2) */
 
     if (Check.Resistors == 1)      /* got resistance */
     {
-      /* check for 4 - 12kOhms */
+      /* check for 3 - 15 kOhms */
       if (CmpValue(Resistors[0].Value, Resistors[0].Scale, 3000, 0) == 1)
       {
         if (CmpValue(Resistors[0].Value, Resistors[0].Scale, 15000, 0) == -1)
@@ -2092,17 +2138,40 @@ void CheckUJT(void)
 
 
   /*
+   *  Check for pn junction:
+   *  - excludes a potentiometer (3-15 k) with the wiper turned to one end
+   *  - the Emitter reverse current is just a few µA (< 20 µA)
+   */
+
+  if (Flag)                   /* next check */
+  {
+    /* measure Emitter reverse current (Rl + RiL as shunt) */
+    /* set probes: probe-1 -- Vcc / probe-2 -- HiZ / Gnd -- Rl -- probe-3 */
+    R_PORT = 0;
+    R_DDR = Probes.Rl_3;                /* pull down E via Rl */
+    ADC_PORT = Probes.Pin_1;
+    ADC_DDR = Probes.Pin_1;             /* pull up B2 directly */
+    U_1 = ReadU_5ms(Probes.Ch_3);       /* voltage at E */
+
+    if (U_1 > 14)                       /* > 14mV (20µA) */
+    {
+      /* reverse current is too large */
+      Flag = 0;                         /* can't be a UJT */
+    }
+  }
+
+
+  /*
    *  Check if we can switch the UJT.
    */
 
-  if (Flag)
+  if (Flag)                   /* next check */
   {
     /* switched off, only R_BB */
     /* set probes: Gnd -- Rl -- probe-2 / probe-1 -- Vcc / probe-3 -- HiZ */
-    R_PORT = 0;
+                                        /* R_PORT is already 0 */
     R_DDR = Probes.Rl_2;                /* pull down B1 via Rl */
-    ADC_PORT = Probes.Pin_1;
-    ADC_DDR = Probes.Pin_1;             /* pull up B2 directly */
+                                        /* B2 is already pulled up directly */ 
     U_1 = ReadU_5ms(Probes.Ch_2);       /* voltage at B1 */
 
     /* switched on */

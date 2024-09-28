@@ -2,7 +2,7 @@
  *
  *   language specific global variables: Brazilian Portuguese (ISO 8859-1)
  *
- *   (c) 2016-2023 by Markus Reschke
+ *   (c) 2016-2024 by Markus Reschke
  *   translation by (°~°) Dr. Wando  --  pressaperfeicao@yahoo.com.br
  *   based on code from Markus Frejek and Karl-Heinz Kübbeler
  *
@@ -33,7 +33,6 @@
   const unsigned char Failed2_str[] MEM_TYPE = "ou danificado!";
   const unsigned char Done_str[] MEM_TYPE = "Concluido!";
   const unsigned char Select_str[] MEM_TYPE = "Selecione";
-  const unsigned char Selftest_str[] MEM_TYPE = "AutoTeste";
   const unsigned char Adjustment_str[] MEM_TYPE = "AutoAjuste";
   const unsigned char Save_str[] MEM_TYPE = "Gravar";
   const unsigned char Load_str[] MEM_TYPE = "Carregar";
@@ -57,6 +56,10 @@
 
 
   /* options */
+  #ifdef SW_SELFTEST
+    const unsigned char Selftest_str[] MEM_TYPE = "AutoTeste";
+  #endif
+
   #if ! defined (BAT_NONE) && ! defined (UI_BATTERY)
     const unsigned char Battery_str[] MEM_TYPE = "Bat";
     const unsigned char OK_str[] MEM_TYPE = "OK";
@@ -217,7 +220,15 @@
   #ifdef SW_PHOTODIODE
     const unsigned char Photodiode_str[] MEM_TYPE = "Fotodiodo";
     const unsigned char NoBias_str[] MEM_TYPE = "nao";
-    const unsigned char ReverseBias_str[] MEM_TYPE = "inv";
+    const unsigned char ReverseBias_str[] MEM_TYPE = "inverso";
+  #endif
+
+  #ifdef SW_DIODE_LED
+    const unsigned char Diode_LED_str[] MEM_TYPE = "Diodo/LED";
+  #endif
+
+  #ifdef SW_METER_5VDC
+    const unsigned char Meter_5VDC_str[] MEM_TYPE = "5V-Meter";
   #endif
 
 #endif

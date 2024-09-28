@@ -1638,7 +1638,7 @@ void MeasureCap(uint8_t Probe1, uint8_t Probe2, uint8_t ID)
    *  run measurements
    */
 
-  UpdateProbes2(Probe1, Probe2);        /* update register bits and probes */
+  UpdateProbes2(Probe1, Probe2);        /* update probes */
 
   /* first run measurement for large caps */ 
   TempByte = LargeCap(Cap);

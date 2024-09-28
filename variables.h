@@ -2,7 +2,7 @@
  *
  *   global variables
  *
- *   (c) 2012-2023 by Markus Reschke
+ *   (c) 2012-2024 by Markus Reschke
  *   based on code from Markus Frejek and Karl-Heinz Kübbeler
  *
  * ************************************************************************ */
@@ -156,7 +156,7 @@
 
 
   /* firmware */
-  const unsigned char Version_str[] MEM_TYPE = "v1.51m";
+  const unsigned char Version_str[] MEM_TYPE = "v1.53m";
 
 
   /* common terms and texts */
@@ -292,6 +292,10 @@
     const unsigned char MAX31855_str[] MEM_TYPE = "MAX31855";
   #endif
 
+  #ifdef HW_BH1750
+    const unsigned char BH1750_str[] MEM_TYPE = "BH1750";
+  #endif
+
   #ifdef SW_R_TRIMMER
     const unsigned char R_t_str[] MEM_TYPE = "Rt";
     const unsigned char R1_str[] MEM_TYPE = "R1";
@@ -301,6 +305,7 @@
   #ifdef SW_C_VLOSS
     const unsigned char U_loss_str[] MEM_TYPE = "V_l";
   #endif
+
 
   /* component symbols */
   const unsigned char Cap_str[] MEM_TYPE = {'-', LCD_CHAR_CAP, '-',0};
@@ -463,7 +468,7 @@
     const uint16_t Inductor_table[NUM_INDUCTOR] MEM_TYPE = {4481, 3923, 3476, 3110, 2804, 2544, 2321, 2128, 1958, 1807, 1673, 1552, 1443, 1343, 1252, 1169, 1091, 1020, 953, 890, 831, 775, 721, 670, 621, 574, 527, 481, 434, 386, 334, 271};
   #endif
 
-  #if defined (HW_FREQ_COUNTER) || defined (SW_SQUAREWAVE)
+  #ifdef VAR_TIMER1_TABLES
     /* Timer1 prescalers and corresponding register bits */
     const uint16_t T1_Prescaler_table[NUM_TIMER1] MEM_TYPE = {1, 8, 64, 256, 1024};
     const uint8_t T1_RegBits_table[NUM_TIMER1] MEM_TYPE = {(1 << CS10), (1 << CS11), (1 << CS11) | (1 << CS10), (1 << CS12), (1 << CS12) | (1 << CS10)};
@@ -641,7 +646,6 @@
   extern const unsigned char Failed2_str[];
   extern const unsigned char Done_str[];
   extern const unsigned char Select_str[];
-  extern const unsigned char Selftest_str[];
   extern const unsigned char Adjustment_str[];
   extern const unsigned char Save_str[];
   extern const unsigned char Load_str[];
@@ -690,6 +694,10 @@
 
 
   /* options */
+  #ifdef SW_SELFTEST
+  extern const unsigned char Selftest_str[];
+  #endif
+
   #ifdef UI_THREE_PROFILES
     extern const unsigned char Profile3_str[];
   #endif
@@ -758,6 +766,10 @@
 
   #ifdef HW_MAX31855
     extern const unsigned char MAX31855_str[];
+  #endif
+
+  #ifdef HW_BH1750
+    extern const unsigned char BH1750_str[];
   #endif
 
   #ifdef SW_ENCODER
@@ -919,6 +931,19 @@
     extern const unsigned char ReverseBias_str[];
   #endif
 
+  #ifdef SW_DIODE_LED
+    extern const unsigned char Diode_LED_str[];
+  #endif
+
+  #ifdef SW_METER_5VDC
+    extern const unsigned char Meter_5VDC_str[];
+  #endif
+
+
+  /* component symbols */
+  extern const unsigned char Diode_AC_str[];
+  extern const unsigned char Diode_CA_str[];
+
 
   /* remote commands */
   #ifdef UI_SERIAL_COMMANDS
@@ -1009,7 +1034,7 @@
     extern const uint16_t Inductor_table[];
   #endif
 
-  #if defined (HW_FREQ_COUNTER) || defined (SW_SQUAREWAVE)
+  #ifdef VAR_TIMER1_TABLES
     /* Timer1 prescalers and corresponding register bits */
     extern const uint16_t T1_Prescaler_table[];
     extern const uint8_t T1_RegBits_table[];

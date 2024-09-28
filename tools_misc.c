@@ -2,7 +2,7 @@
  *
  *   misc tools (hardware and software options)
  *
- *   (c) 2012-2023 by Markus Reschke
+ *   (c) 2012-2024 by Markus Reschke
  *
  * ************************************************************************ */
 
@@ -63,7 +63,7 @@ void ProbePinout(uint8_t Mode)
 
   switch (Mode)
   {
-    #if defined (SW_PWM_SIMPLE) || defined (SW_PWM_PLUS) || defined (SW_SERVO) || defined (SW_SQUAREWAVE)
+    #ifdef SW_PROBEPINOUT_PWM
     case PROBES_PWM:
       /* probe #1: Gnd / probe #2: signal / probe #3: Gnd */
       Char1 = '-';
@@ -72,7 +72,7 @@ void ProbePinout(uint8_t Mode)
       break;
     #endif
 
-    #if defined (SW_ESR_TOOL) || defined (SW_CONTINUITY_CHECK)
+    #ifdef SW_PROBEPINOUT_ESR
     case PROBES_ESR:
       /* probe #1: + / probe #3: - */
       Char1 = '+';
@@ -81,7 +81,7 @@ void ProbePinout(uint8_t Mode)
       break;
     #endif
 
-    #if defined (SW_MONITOR_R) || defined (SW_MONITOR_C) || defined (SW_MONITOR_L) || defined(SW_MONITOR_RCL) || defined(SW_MONITOR_RL)
+    #ifdef SW_PROBEPINOUT_RCL
     case PROBES_RCL:
       /* probe #1: * / probe #3: * */
       Char1 = '*';
@@ -839,7 +839,6 @@ void Check_LED(uint8_t Probe1, uint8_t Probe2)
 {
   uint16_t          U1;                 /* voltage */
 
-  /* update all three probes (3rd probe is done automatically) */
   UpdateProbes2(Probe1, Probe2);        /* update probes */
 
   /* we assume: probe-1 = A / probe2 = C */
@@ -947,8 +946,7 @@ void OptoCoupler_Tool(void)
 
       if (Check.Diodes == 1)       /* got one */
       {
-        /* update all three probes for remaining checks */
-        /* (3rd probe is done automatically) */
+        /* update probes for remaining checks (3rd probe is done automatically) */
         UpdateProbes2(Diodes[0].A, Diodes[0].C);
 
         Test = DETECTED_LED;            /* proceed with other checks */
@@ -1472,7 +1470,7 @@ void Monitor_R(void)
   ProbePinout(PROBES_RCL);              /* show probes used */
 
   /* init */
-  UpdateProbes2(PROBE_1, PROBE_3);      /* set probes */
+  UpdateProbes2(PROBE_1, PROBE_3);      /* update probes */
   R1 = &Resistors[0];                   /* pointer to first resistor */
   /* increase number of samples to lower spread of measurement values */
   Cfg.Samples = 100;                    /* perform 100 ADC samples */
@@ -1656,7 +1654,7 @@ void Monitor_L(void)
     #endif
 
     /* measure R */
-    UpdateProbes2(PROBE_1, PROBE_3);    /* set probes */
+    UpdateProbes2(PROBE_1, PROBE_3);    /* update probes */
     Check.Resistors = 0;                /* reset resistor counter */
     CheckResistor();                    /* check for resistor */
     LCD_ClearLine2();                   /* clear line #2 */
@@ -1747,7 +1745,7 @@ void Monitor_RCL(void)
       Cfg.Samples = 100;                /* perform 100 ADC samples */
 
       /* measure R */
-      UpdateProbes2(PROBE_1, PROBE_3);       /* set probes */
+      UpdateProbes2(PROBE_1, PROBE_3);       /* update probes */
       Check.Resistors = 0;                   /* reset resistor counter */
       CheckResistor();                       /* check for resistor */
 
@@ -1879,7 +1877,7 @@ void Monitor_RL(void)
   while (Flag)
   {
     /* measure R and display value */
-    UpdateProbes2(PROBE_1, PROBE_3);    /* set probes */
+    UpdateProbes2(PROBE_1, PROBE_3);    /* update probes */
     Check.Resistors = 0;                /* reset resistor counter */
     CheckResistor();                    /* check for resistor */
     LCD_ClearLine2();                   /* clear line #2 */
@@ -2441,9 +2439,9 @@ void Flashlight(void)
 #ifdef SW_PHOTODIODE
 
 /*
- *  check photodiode
+ *  check photodiodes
  *  - supports reverse-bias and no-bias mode
- *  - uses probe #1 (anode) and probe #3 (cathode)
+ *  - uses probes #1 (anode) and #3 (cathode)
  */
 
 void PhotodiodeCheck(void)
@@ -2551,7 +2549,7 @@ void PhotodiodeCheck(void)
     I /= R;                        /* / R (in 0.1 Ohms) -> I in 0.1 µA */ 
 
     /* display I_P */
-    LCD_ClearLine2();              /* line #2 */
+    LCD_ClearLine2();              /* clear line #2 */
     if (Flag & REVERSE_BIAS)       /* reverse-bias mode */
     {
       Display_EEString_Space(ReverseBias_str);    /* display: rev */
@@ -2602,6 +2600,411 @@ void PhotodiodeCheck(void)
   #undef NO_BIAS
   #undef REVERSE_BIAS
   #undef UPDATE_BIAS
+}
+
+#endif
+
+
+
+/* ************************************************************************
+ *   diode/LED check
+ * ************************************************************************ */
+
+
+#ifdef SW_DIODE_LED
+
+/*
+ *  display diode pinout and Uf
+ *
+ *  requires:
+ *  - Diode: pointer of diode data
+ */
+
+void Show_Single_Diode(Diode_Type *Diode)
+{
+  Display_ProbeNumber(Diode->A);        /* show probe number of anode */
+  Display_EEString(Diode_AC_str);       /* show: ->|- */
+  Display_ProbeNumber(Diode->C);        /* show probe number of cathode */
+  Display_Space();
+  Display_Value(Diode->V_f, -3, 'V');   /* show Uf (in mV) */
+}
+
+
+
+/*
+ *  quick-check diodes and LEDs
+ *  - uses probes #1 and #3
+ *  - requires a display with >= 3 text lines
+ */
+
+void Diode_LED_Check(void)
+{
+  uint8_t           Flag = 1;           /* loop control */
+  uint8_t           Test;               /* user feedback */
+
+
+  /*
+   *  show info
+   */
+
+  LCD_Clear();
+  #ifdef UI_COLORED_TITLES
+    /* display: diode/LED */
+    Display_ColoredEEString(Diode_LED_str, COLOR_TITLE);
+  #else
+    Display_EEString(Diode_LED_str);         /* display: diode/LED */
+  #endif
+  ProbePinout(PROBES_RCL);                   /* show probes used */
+
+
+  /*
+   *  processing loop
+   */
+
+  while (Flag > 0)
+  {
+    /*
+     *  check for diodes
+     */
+
+    /* reset values */
+    Check.Diodes = 0;                   /* reset diode counter */
+
+    /* check for diode in one direction (probe #1: A, probe #3: C */
+    UpdateProbes2(PROBE_1, PROBE_3);         /* update probes */
+    CheckDiode();                            /* run diode check */
+
+    /* check for diode in other direction (probe #1: C, probe #3: A */
+    UpdateProbes2(PROBE_3, PROBE_1);         /* update probes */
+    CheckDiode();                            /* run diode check */
+
+
+    /*
+     *  process results
+     */
+
+    LCD_ClearLine(3);                   /* clear line #3 */
+    LCD_ClearLine2();                   /* clear line #2 */
+
+    if (Check.Diodes == 0)              /* no diode */
+    {
+      Display_Minus();                  /* display: - */
+    }
+    else                                /* one diode or more */
+    {
+      Show_Single_Diode(&Diodes[0]);    /* display pinout and Uf of first diode */
+    }
+
+    if (Check.Diodes == 2)              /* two anti-parallel diodes */
+    {
+      LCD_CharPos(1, 3);                /* go to start of line #3 */
+      Show_Single_Diode(&Diodes[1]);    /* display pinout and Uf of second diode */
+    }
+
+
+    /*
+     *  user feedback
+     */
+
+    /* check for user feedback and slow down update rate */
+    Test = TestKey(250, CHECK_KEY_TWICE | CHECK_BAT);
+
+    if (Test == KEY_TWICE)    /* two short key presses */
+    {
+      Flag = 0;                    /* end loop */
+    }
+  }
+}
+
+#endif
+
+
+
+/* ************************************************************************
+ *   Voltmeter 0-5V DC
+ * ************************************************************************ */
+
+
+#ifdef SW_METER_5VDC
+
+/*
+ *  Voltmeter 0-5V DC
+ *  - input impedance:
+ *    470 kOhms (Rh, default)
+ *    680 Ohms + RiL (Rl)
+ *  - with optional buzzer:
+ *    beep when default threshold is exceeded
+ *  - with additional keys and buzzer:
+ *    adjustable threshold, beep when exceeded
+ *  - uses probes #1 (positive) and #3 (ground)
+ */
+
+void Meter_5VDC(void)
+{
+  uint8_t           Flag;               /* loop control */
+  uint8_t           Test = 0;           /* user feedback */
+  uint16_t          U;                  /* voltage */
+  #ifdef HW_BUZZER
+  uint16_t          Threshold;          /* voltage threshold */
+  uint8_t           n;
+  #endif
+
+  /* local constants for Flag (bitfield) */
+  #define RUN_FLAG            0b00000001     /* run / otherwise end */
+  #define BUZZER_ON           0b00000010     /* buzzer enabled */
+  #define UPDATE_THRESHOLD    0b00000100     /* update threshold */
+  #define INPUT_RH            0b00001000     /* use Rh as input impedance */
+  #define UPDATE_INPUT        0b00010000     /* update input impedance */
+
+  /* default voltage threshold: scale to mV */
+  #define THRESHOLD           (METER_5VDC_THRESHOLD * 100)
+
+
+  /*
+   *  show info
+   */
+
+  LCD_Clear();
+  #ifdef UI_COLORED_TITLES
+    /* display: 5V-Meter */
+    Display_ColoredEEString(Meter_5VDC_str, COLOR_TITLE);
+  #else
+    Display_EEString(Meter_5VDC_str);        /* display: 5V Meter */
+  #endif
+  ProbePinout(PROBES_ESR);                   /* show probes used */
+
+
+  /*
+   *  init
+   */
+
+  UpdateProbes(PROBE_1, PROBE_2, PROBE_3);   /* update probes */
+
+  /* set probes: Gnd - probe #3 / probe #1 - Rh - Gnd */
+  ADC_PORT = 0;                    /* pull down directly */
+  ADC_DDR = Probes.Pin_3;          /* enable Gnd for probe #3 */
+  R_PORT = 0;                      /* pull down */
+  R_DDR = Probes.Rh_1;             /* pull down probe #1 via Rh */
+
+  #ifdef HW_BUZZER
+  Threshold = THRESHOLD;           /* set default */
+  #endif
+
+  /* enter loop, Rh as input impedance, update input status */
+  Flag = RUN_FLAG | INPUT_RH | UPDATE_INPUT;
+
+
+  /*
+   *  processing loop
+   */
+
+  while (Flag > 0)
+  {
+    /*
+     *  update input impedance status
+     */
+
+    if (Flag & UPDATE_INPUT)       /* update requested */
+    {
+      /* show title */
+      LCD_ClearLine(1);                 /* clear line #1 */
+      LCD_CharPos(1, 1);                /* pos #1 in line #1 */
+      #ifdef UI_COLORED_TITLES
+        /* display: 5V-Meter */
+        Display_ColoredEEString(Meter_5VDC_str, COLOR_TITLE);
+      #else
+        /* display: 5V Meter */
+        Display_EEString(Meter_5VDC_str);
+      #endif
+
+      /* show input impedance */
+      Display_Space();
+
+      if (Flag & INPUT_RH)              /* Rh selected */
+      {
+        Display_Char('H');              /* display: H */
+      }
+      else                              /* Rl selected */
+      {
+        Display_Char('L');              /* display: L */
+      }
+
+      Flag &= ~UPDATE_INPUT;            /* clear flag */
+    }
+
+    /* smooth UI after long key press */
+    if (Test == KEY_LONG)          /* long key press */
+    {
+      SmoothLongKeyPress();             /* delay next key press */
+    }
+
+
+    #ifdef HW_BUZZER
+    /*
+     *  update threshold status
+     */
+
+    if (Flag & UPDATE_THRESHOLD)   /* update requested */
+    {
+      /* clear threshold anyway */
+      LCD_CharPos(9, 2);                /* pos #9 in line #2 */
+      LCD_ClearLine(0);                 /* clear rest of line */
+
+      if (Flag & BUZZER_ON)             /* buzzer enabled */
+      {
+        /* show threshold */
+        U = Threshold / 100;            /* scale to 100mV */
+        LCD_CharPos(9, 2);              /* pos #9 in line #2 */
+        Display_Char('(');              /* display: ( */
+        Display_Value(U, -1, 'V');      /* display voltage */
+        Display_Char(')');              /* display: ) */
+      }
+
+      Flag &= ~UPDATE_THRESHOLD;        /* clear flag */
+    }
+    #endif
+
+
+    /*
+     *  measure voltage
+     */
+
+    U = ReadU(Probes.Ch_1);        /* voltage at probe #1 (postive), in mV */
+
+
+    /*
+     *  display voltage
+     */
+
+    /* clear pos #1 - #6 in line #2 */
+    LCD_CharPos(1, 2);             /* pos #1 in line #2 */
+    for (n = 0; n < 6; n++)        /* clear pos #1 - #6 */
+    {
+      Display_Space();
+    }
+
+    /* display voltage */
+    LCD_CharPos(1, 2);             /* pos #1 in line #2 */
+    Display_Value(U, -3, 'V');     /* display voltage */
+
+    #ifdef HW_BUZZER
+    if (Flag & BUZZER_ON)          /* buzzer enabled */
+    {
+      if (U >= Threshold)          /* threshold exceeded */
+      {
+        #ifdef BUZZER_ACTIVE
+        /* enable buzzer */
+        BUZZER_PORT |= (1 << BUZZER_CTRL);     /* set pin high */
+
+        wait20ms();                            /* wait 20 ms */
+   
+        /* disable buzzer */
+        BUZZER_PORT &= ~(1 << BUZZER_CTRL);    /* set pin low */
+        #endif
+
+        #ifdef BUZZER_PASSIVE
+        PassiveBuzzer(BUZZER_FREQ_HIGH);       /* high frequency beep */
+        #endif
+      }
+    }
+    #endif
+
+
+    /*
+     *  user feedback
+     */
+
+    /* check for user feedback and slow down update rate */
+    Test = TestKey(250, CHECK_KEY_TWICE | CHECK_BAT);
+
+    if (Test == KEY_TWICE)         /* two short key presses */
+    {
+      Flag = 0;                         /* end loop */
+    }
+    #ifdef HW_BUZZER
+    else if (Test == KEY_SHORT)    /* short key press */
+    {
+      /* toggle buzzer */
+      if (Flag & BUZZER_ON)             /* buzzer enabled */
+      {
+        /* disable buzzer */
+        Flag &= ~BUZZER_ON;             /* clear flag */
+      }
+      else                              /* buzzer disabled */
+      {
+        /* enable buzzer */
+        Flag |= BUZZER_ON;              /* set flag */
+      }
+
+      Flag |= UPDATE_THRESHOLD;         /* update status */
+    }
+    #endif
+    #if defined (HW_BUZZER) && defined (HW_KEYS)
+    else if (Test == KEY_RIGHT)    /* right turn */
+    {
+      /* increase voltage threshold (by 0.1V) */
+      if (Threshold <= 4900)            /* prevent overrun */
+      {
+        Threshold += 100;               /* + 0.1 V */
+        Flag |= UPDATE_THRESHOLD;       /* update status */
+      }
+    }
+    else if (Test == KEY_LEFT)     /* left turn */
+    {
+      /* decrease voltage threshold (by 0.1V) */
+      if (Threshold >= 100)             /* prevent underrun */
+      {
+        Threshold -= 100;               /* - 0.1 V */
+        Flag |= UPDATE_THRESHOLD;       /* update status */
+      }
+    }
+    else if (Test == KEY_LONG)     /* long key press */
+    {
+      /* change input impedance */
+      if (Flag & INPUT_RH)              /* Rh selected */
+      {
+        /* change to Rl */
+        /* set probes: probe #1 - Rl - Gnd */
+        R_DDR = Probes.Rl_1;            /* pull down probe #1 via Rl */
+        Flag &= ~INPUT_RH;              /* clear flag */
+      }
+      else                              /* Rl selected */
+      {
+        /* change to Rh */
+        /* set probes: probe #1 - Rh - Gnd */
+        R_DDR = Probes.Rh_1;            /* pull down probe #1 via Rh */
+        Flag |= INPUT_RH;               /* set flag */
+      }
+
+      Flag |= UPDATE_INPUT;             /* update status */
+
+#if 0
+      /* alternative: reset voltage threshold */
+      if (Flag & BUZZER_ON)             /* buzzer enabled */
+      {
+        /* set threshold to default value */
+        Threshold = THRESHOLD;          /* set default */
+        Flag |= UPDATE_THRESHOLD;       /* update status */
+      }
+#endif
+    }
+    #endif
+  }
+
+
+  /*
+   *  clean up
+   */
+
+  /* local constants for Flag */
+  #undef RUN_FLAG
+  #undef BUZZER_ON
+  #undef UPDATE_THRESHOLD
+  #undef INPUT_RH
+  #undef UPDATE_INPUT
+
+  /* default threshold */
+  #undef THRESHOLD
 }
 
 #endif

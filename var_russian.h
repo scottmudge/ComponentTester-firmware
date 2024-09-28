@@ -2,7 +2,7 @@
  *
  *   language specific global variables: Russian (Windows-1251)
  *
- *   (c) 2017-2023 by Markus Reschke
+ *   (c) 2017-2024 by Markus Reschke
  *   translation by indman@EEVblog
  *   based on code from Markus Frejek and Karl-Heinz Kьbbeler
  *
@@ -32,7 +32,6 @@
   const unsigned char Failed2_str[] MEM_TYPE = "или повреждена";
   const unsigned char Done_str[] MEM_TYPE = "Готово!";
   const unsigned char Select_str[] MEM_TYPE = "Режим";
-  const unsigned char Selftest_str[] MEM_TYPE = "Самотест";
   const unsigned char Adjustment_str[] MEM_TYPE = "Корректировка";
   const unsigned char Save_str[] MEM_TYPE = "Сохранить";
   const unsigned char Load_str[] MEM_TYPE = "Загрузить";
@@ -57,6 +56,10 @@
 
 
   /* options */
+  #ifdef SW_SELFTEST
+    const unsigned char Selftest_str[] MEM_TYPE = "Самотест";
+  #endif
+
   #if ! defined (BAT_NONE) && ! defined (UI_BATTERY)
     const unsigned char Battery_str[] MEM_TYPE = "Бат";
     const unsigned char OK_str[] MEM_TYPE = "OK";
@@ -218,6 +221,14 @@
     const unsigned char Photodiode_str[] MEM_TYPE = "Фотодиод";
     const unsigned char NoBias_str[] MEM_TYPE = "Ip_no";
     const unsigned char ReverseBias_str[] MEM_TYPE = "Ip_rev";
+  #endif
+
+  #ifdef SW_DIODE_LED
+    const unsigned char Diode_LED_str[] MEM_TYPE = "Diode/LED";
+  #endif
+
+  #ifdef SW_METER_5VDC
+    const unsigned char Meter_5VDC_str[] MEM_TYPE = "5V-Meter";
   #endif
 
 #endif

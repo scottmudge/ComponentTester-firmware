@@ -2,7 +2,7 @@
  *
  *   global configuration, setup and settings
  *
- *   (c) 2012-2023 by Markus Reschke
+ *   (c) 2012-2024 by Markus Reschke
  *   based on code from Markus Frejek and Karl-Heinz K�bbeler
  *
  * ************************************************************************ */
@@ -362,10 +362,29 @@
 //#define HW_FLASHLIGHT
 
 
+/*
+ *  BH1750VFI ambient light sensor
+ *  - requires I2C bus and I2C read support
+ *  - uncomment to enable and also select the correct I2C address
+ */
+
+//#define HW_BH1750
+#define BH1750_I2C_ADDR       0x23      /* I2C address 0x23 (ADDR low) */
+//#define BH1750_I2C_ADDR      0x5c       /* I2C address 0x5c (ADDR high) */
+
+
 
 /* ************************************************************************
  *   software options
  * ************************************************************************ */
+
+
+/*
+ *  Self Test
+ *  - comment out to disable
+ */
+
+// #define SW_SELFTEST
 
 
 /*
@@ -449,7 +468,7 @@
  *  - uncomment to enable
  */
 
-// #define SW_IR_RECEIVER
+#define SW_IR_RECEIVER
 
 
 /*
@@ -458,7 +477,7 @@
  *  - select one
  */
 
-// #define SW_IR_RX_PINOUT_G_V_D      /* 1-Gnd 2-Vcc 3-Data (default) */
+#define SW_IR_RX_PINOUT_G_V_D      /* 1-Gnd 2-Vcc 3-Data (default) */
 //#define SW_IR_RX_PINOUT_D_G_V      /* 1-Data 2-Gnd 3-Vcc */
 //#define SW_IR_RX_PINOUT_D_V_G      /* 1-Data 2-Vcc 3-Gnd */
 
@@ -504,7 +523,7 @@
 
 
 /*
- *  Alternative delay loop for IR remote control sender
+ *  alternative delay loop for IR remote control sender
  *  - in case the the C compiler screws up the default delay loop
  *    and causes incorrect pulse/pause timings
  *  - uncomment to enable
@@ -634,11 +653,11 @@
  *  - uncomment to enable (one or more)
  */
 
-// #define SW_MONITOR_R          /* just R */
-// #define SW_MONITOR_C          /* just C plus ESR */
-// #define SW_MONITOR_L          /* just L */
-// #define SW_MONITOR_RCL        /* R plus L, or C plus ESR */
-// #define SW_MONITOR_RL         /* R plus L */
+//#define SW_MONITOR_R          /* just R */
+//#define SW_MONITOR_C          /* just C plus ESR */
+//#define SW_MONITOR_L          /* just L */
+//#define SW_MONITOR_RCL        /* R plus L, or C plus ESR */
+//#define SW_MONITOR_RL         /* R plus L */
 
 
 /*
@@ -667,12 +686,12 @@
  */
 
 #define SW_R_E24_5_T          /* E24 5% tolerance, text */
-// #define SW_R_E24_5_CC         /* E24 5% tolerance, color-code */
+//#define SW_R_E24_5_CC         /* E24 5% tolerance, color-code */
 #define SW_R_E24_1_T          /* E24 1% tolerance, text */
-// #define SW_R_E24_1_CC         /* E24 1% tolerance, color-code */
+//#define SW_R_E24_1_CC         /* E24 1% tolerance, color-code */
 #define SW_R_E96_T            /* E96 1% tolerance, text */
-// #define SW_R_E96_CC           /* E96 1% tolerance, color-code */
-// #define SW_R_E96_EIA96        /* E96 1% tolerance, EIA-96 code */
+//#define SW_R_E96_CC           /* E96 1% tolerance, color-code */
+//#define SW_R_E96_EIA96        /* E96 1% tolerance, EIA-96 code */
 
 
 /*
@@ -690,7 +709,7 @@
  *  - requires a display with more than 2 text lines
  *  - uncomment to enable (one or more)
  */
- 
+
 #define SW_L_E6_T             /* E6 20% tolerance, text */
 #define SW_L_E12_T            /* E12 10% tolerance, text */
 
@@ -727,6 +746,27 @@
  */
 
 #define SW_PHOTODIODE
+
+
+/*
+ *  diode/LED quick-check
+ *  - requires a display with more than 2 text lines
+ *  - uncomment to enable
+ */
+
+#define SW_DIODE_LED
+
+
+/*
+ *  Voltmeter 0-5V DC
+ *  - warning: no input protection!!!
+ *  - with optional buzzer:
+ *    beep when default threshold is exceeded
+ *  - uncomment to enable
+ */
+
+//#define SW_METER_5VDC
+#define METER_5VDC_THRESHOLD  25        /* default threshold in 100 mV */
 
 
 
@@ -787,20 +827,22 @@
 
 
 /*
- *  Language of user interface. Available languages:
- *  - English (default)
- *  - Brazilian Portuguese
- *  - Czech (based on ISO 8859-1)
- *  - Czech 2 (with Czech characters based on ISO 8859-2)
- *  - Danish
- *  - French (based on ISO 8859-1)
- *  - German
- *  - Polish (based on ISO 8859-1)
- *  - Polish 2 (with Polish characters based on ISO 8859-2)
- *  - Spanish
- *  - Romanian
- *  - Russian (with cyrillic characters based on Windows-1251)
- *  - Russian 2 (with cyrillic characters based on Windows-1251)
+ *  Language of user interface.
+ *  - Available languages:
+ *    - English (default)
+ *    - Brazilian Portuguese
+ *    - Czech (based on ISO 8859-1)
+ *    - Czech 2 (with Czech characters based on ISO 8859-2)
+ *    - Danish
+ *    - French (based on ISO 8859-1)
+ *    - German
+ *    - Polish (based on ISO 8859-1)
+ *    - Polish 2 (with Polish characters based on ISO 8859-2)
+ *    - Spanish
+ *    - Romanian
+ *    - Russian (with cyrillic characters based on Windows-1251)
+ *    - Russian 2 (with cyrillic characters based on Windows-1251)
+ *  - choose one language
  */
 
 #define UI_ENGLISH
@@ -836,20 +878,40 @@
 
 
 /*
- *  Display hexadecimal values in uppercase instead of lowercase
+ *  Display 4-digit values as value with metric prefix (where applicable).
+ *  - 1234  -> 1.234k
+ *    1234k -> 1.234M
+ *    1234p -> 1.234n
+ *  - uncomment to enable.
+ */
+
+#define UI_PREFIX
+
+
+/*
+ *  Display hexadecimal values in uppercase instead of lowercase.
  *  - uncomment to enable
  */
 
-//#define UI_HEX_UPPERCASE
+#define UI_HEX_UPPERCASE
 
 
 /*
  *  Set the default operation mode to auto-hold.
- *  - instead of continous mode
+ *  - instead of continuous mode
  *  - uncomment to enable
  */
 
 //#define UI_AUTOHOLD
+
+
+/*
+ *  Switch temporarily to auto-hold mode when a component is detected.
+ *  - only in continuous mode
+ *  - uncomment to enable
+ */
+
+//#define UI_AUTOHOLD_FOUND
 
 
 /*
@@ -1109,10 +1171,15 @@
 
 /*
  *  main menu: display font for test purposes
+ *  - default output format:
+ *    index number (hex) and 8 characters (including unavailable ones)
+ *  - packed output format:
+ *    no index, only available characters, complete text line
  *  - uncomment to enable
  */
 
 //#define SW_FONT_TEST
+//#define FONT_PACKED           /* packed output format */
 
 
 /*
@@ -1153,13 +1220,22 @@
 
 
 /*
+ *  Self-Test/Adjustment: display measurement values page-wise
+ *  - requires display with 6 text lines or more
+ *  - uncomment to enable
+ */
+
+//#define UI_TEST_PAGEMODE
+
+
+/*
  *  storage of firmware data (texts, tables etc)
  *  - self-adjustment data is always stored in EEPROM
  *  - fonts and symbols are always stored in Flash memory
  *  - uncomment one
  */ 
 
-//#define DATA_EEPROM           /* store data in EEPROM */
+// #define DATA_EEPROM           /* store data in EEPROM */
 #define DATA_FLASH            /* store data in Flash */
 
 
@@ -1489,7 +1565,7 @@
 //#define I2C_HARDWARE               /* MCU's hardware TWI */
 //#define I2C_STANDARD_MODE          /* 100kHz bus speed */
 //#define I2C_FAST_MODE              /* 400kHz bus speed */
-//#define I2C_RW                     /* enable I2C read support (untested) */
+//#define I2C_RW                     /* enable I2C read support */
 
 
 /*
