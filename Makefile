@@ -119,7 +119,7 @@ OPTIONS = -B 5.0
 #
 
 # optimize interrupt vector table (requires linux/unix environment)
-#OPTIMIZE_VECTORS = yes
+OPTIMIZE_VECTORS = yes
 
 
 #
