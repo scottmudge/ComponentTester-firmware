@@ -468,7 +468,7 @@
  *  - uncomment to enable
  */
 
-#define SW_IR_RECEIVER
+// #define SW_IR_RECEIVER
 
 
 /*
